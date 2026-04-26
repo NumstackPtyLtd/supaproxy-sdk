@@ -112,6 +112,10 @@ export class SupaProxyClient {
 class AuthAPI {
   constructor(private client: SupaProxyClient) {}
 
+  login(data: { email: string; password: string }): Promise<SessionResponse> {
+    return this.client.post('/api/auth/login', data);
+  }
+
   session(): Promise<SessionResponse> {
     return this.client.get('/api/auth/session');
   }

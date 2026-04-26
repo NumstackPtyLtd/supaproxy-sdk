@@ -1,6 +1,6 @@
 {
   "name": "@supaproxy/sdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "type": "module",
   "description": "TypeScript SDK for SupaProxy. Typed API client for building dashboards and integrations.",
@@ -20,7 +20,10 @@
   "bugs": {
     "url": "https://github.com/NumstackPtyLtd/supaproxy-sdk/issues"
   },
-  "files": ["dist", "README.md"],
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc",
     "lint": "tsc --noEmit",

@@ -15,13 +15,44 @@ pnpm add @supaproxy/sdk
 npm install @supaproxy/sdk
 ```
 
-## Usage
+## Authentication
+
+SupaProxy uses cookie-based auth (httpOnly JWT). The SDK sends `credentials: 'include'` by default so cookies are attached to every request.
 
 ```typescript
 import { SupaProxyClient } from '@supaproxy/sdk';
 
 const client = new SupaProxyClient('http://localhost:3001');
 
+// Sign up (creates org, user, and first workspace)
+await client.auth.signup({
+  org_name: 'Acme Corp',
+  admin_name: 'Jane',
+  admin_email: 'jane@acme.com',
+  admin_password: 'securepassword',
+  workspace_name: 'Support',
+  team_name: 'Engineering',
+});
+
+// Log in (sets session cookie)
+await client.auth.login({ email: 'jane@acme.com', password: 'securepassword' });
+
+// Check session
+const { user } = await client.auth.session();
+```
+
+For server-side usage (Node.js), pass cookies manually via headers:
+
+```typescript
+const client = new SupaProxyClient({
+  baseUrl: 'http://localhost:3001',
+  headers: { Cookie: 'supaproxy_session=<jwt_token>' },
+});
+```
+
+## Usage
+
+```typescript
 // Workspaces
 const { workspaces } = await client.workspaces.list();
 const detail = await client.workspaces.detail('ws-my-workspace');
@@ -34,6 +65,20 @@ const convo = await client.conversations.get('ws-my-workspace', 'conv-id');
 // Org settings
 const org = await client.org.get();
 const settings = await client.org.settings();
+```
+
+## Error handling
+
+```typescript
+import { SupaProxyClient, SupaProxyError } from '@supaproxy/sdk';
+
+try {
+  await client.workspaces.list();
+} catch (err) {
+  if (err instanceof SupaProxyError) {
+    console.error(err.status, err.message); // e.g. 401, "Not authenticated"
+  }
+}
 ```
 
 ## Types
