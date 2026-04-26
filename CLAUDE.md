@@ -45,6 +45,7 @@ pnpm lint       # tsc --noEmit (typecheck only)
 2. Run `/audit-sdk` to check type completeness and server route alignment.
 3. Ensure README documents any new public exports.
 4. If this changes the API surface: note semver impact in the PR description.
+5. If methods, types, or error handling changed: note which pages in [supaproxy-docs](https://github.com/NumstackPtyLtd/supaproxy-docs) need updating (sdk/ section).
 
 ### After a PR merges to main
 1. If this is a publishable change: run `/publish-package` for a guided release.
