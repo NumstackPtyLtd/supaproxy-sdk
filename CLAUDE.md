@@ -23,14 +23,7 @@ src/
 
 The client wraps `fetch` with cookie-based auth (`credentials: 'include'`). Each API group class has methods that call `client.get()`, `client.post()`, etc. Response types are defined in `api.ts` and reference entity types from `entities.ts`.
 
-## Related repos
-
-| Repo | Visibility | Purpose |
-|---|---|---|
-| supaproxy-server | Public (MIT) | Hono API server (the API this SDK wraps) |
-| supaproxy-sdk (this) | Public (MIT) | TypeScript SDK |
-| supaproxy-dashboard | Private | Astro + React frontend (primary consumer of this SDK) |
-| supaproxy | Private | Contributor hub, cross-repo skills |
+See the [supaproxy repo](https://github.com/NumstackPtyLtd/supaproxy) for the full project overview, cross-repo workflow, and shared code principles.
 
 ## Start dev
 
@@ -40,29 +33,35 @@ pnpm build      # Compile to dist/
 pnpm lint       # tsc --noEmit (typecheck only)
 ```
 
+## Session workflow
+
+### At the start of every session
+1. Run `git fetch --all` and check recent changes.
+2. Check if server routes have changed since the last SDK update: compare route files in `../supaproxy-server/src/routes/` with methods in `src/client.ts`.
+3. If drift detected, flag it immediately.
+
+### Before creating a PR (MANDATORY)
+1. Run `pnpm lint && pnpm build`.
+2. Run `/audit-sdk` to check type completeness and server route alignment.
+3. Ensure README documents any new public exports.
+4. If this changes the API surface: note semver impact in the PR description.
+
+### After a PR merges to main
+1. If this is a publishable change: run `/publish-package` for a guided release.
+2. After publishing: update the dependency version in supaproxy-dashboard.
+3. Create a git tag for the release.
+
 ## Code rules
 
-### Type safety
-- No `any` types. No `as any` casts.
+For shared code principles (provider agnosticism, type safety, error handling, security, writing standards), see the [supaproxy CLAUDE.md](https://github.com/NumstackPtyLtd/supaproxy/blob/main/CLAUDE.md#code-principles-apply-everywhere).
+
+### SDK-specific rules
 - All public methods must have explicit return types.
 - All API response types must be fully defined in `api.ts`.
 - Entity types go in `entities.ts`. Config types go in `types.ts`.
-
-### Error handling
 - All non-ok responses throw `SupaProxyError` with status and message.
-- No empty catch blocks.
-- `res.ok` is checked before parsing JSON.
-
-### Exports
 - All public types and classes are exported through `src/index.ts`.
 - Classes are exported as values. Types and interfaces are exported with `export type`.
-
-### Provider agnosticism
-- No AI provider names in code or documentation.
-- No provider-specific token formats as placeholders.
-
-### British English
-- Use British English in documentation and comments.
 
 ## Adding a method
 
