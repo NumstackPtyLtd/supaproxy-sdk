@@ -18,6 +18,7 @@ import type {
   ConsumersResponse, KnowledgeResponse, ComplianceResponse,
   ConversationListResponse, ConversationDetailResponse, CloseConversationResponse,
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
+  ApiKeyListResponse, CreateApiKeyResponse,
   StatusResponse, ErrorResponse,
 } from './api.js';
 
@@ -211,6 +212,17 @@ class WorkspacesAPI {
   query(id: string, data: QueryRequest): Promise<QueryResponse> {
     return this.client.post(`/api/workspaces/${id}/query`, data);
   }
+
+  apiKeys = {
+    list: (workspaceId: string, options?: RequestOptions): Promise<ApiKeyListResponse> =>
+      this.client.get(`/api/workspaces/${workspaceId}/api-keys`, options),
+
+    create: (workspaceId: string, data: { label: string; test?: boolean }): Promise<CreateApiKeyResponse> =>
+      this.client.post(`/api/workspaces/${workspaceId}/api-keys`, data),
+
+    revoke: (workspaceId: string, keyId: string): Promise<StatusResponse> =>
+      this.client.delete(`/api/workspaces/${workspaceId}/api-keys/${keyId}`),
+  };
 }
 
 // ── Connections ──

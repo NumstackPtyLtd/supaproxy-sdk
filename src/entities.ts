@@ -3,6 +3,16 @@
  * Used by server for type-safe DB queries and by SDK for response typing.
  */
 
+// ── API keys ──
+
+export interface ApiKey {
+  id: string;
+  prefix: string;
+  label: string;
+  created_at: string;
+  last_used_at: string | null;
+}
+
 // ── Conversation lifecycle ──
 
 export type ConversationStatus = 'open' | 'cold' | 'closed';

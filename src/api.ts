@@ -229,6 +229,20 @@ export interface QueuesResponse {
   queues: QueueStats[];
 }
 
+// ── API keys ──
+
+export interface ApiKeyListResponse {
+  keys: import('./entities').ApiKey[];
+}
+
+export interface CreateApiKeyResponse {
+  id: string;
+  key: string;
+  prefix: string;
+  label: string;
+  created_at: string;
+}
+
 // ── Generic ──
 
 export interface ErrorResponse {
