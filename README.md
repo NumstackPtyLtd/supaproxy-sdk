@@ -67,6 +67,32 @@ const org = await client.org.get();
 const settings = await client.org.settings();
 ```
 
+## API keys
+
+Workspace API keys allow programmatic access without a session cookie — used by the MCP server and external integrations.
+
+```typescript
+// Create a key (full key returned once — store it securely)
+const { id, key, prefix, label } = await client.workspaces.apiKeys.create('ws-id', {
+  label: 'My integration',
+});
+// key looks like: sp_live_a1b2c3d4...
+
+// Create a test key (bypasses rate limits and billing)
+const testKey = await client.workspaces.apiKeys.create('ws-id', {
+  label: 'CI tests',
+  test: true,
+});
+// key looks like: sp_test_a1b2c3d4...
+
+// List active keys (prefix and metadata only — raw key not returned)
+const { keys } = await client.workspaces.apiKeys.list('ws-id');
+// keys: [{ id, prefix: 'sp_live_a1b2', label, created_at, last_used_at }]
+
+// Revoke a key immediately
+await client.workspaces.apiKeys.revoke('ws-id', keyId);
+```
+
 ## Error handling
 
 ```typescript
