@@ -181,7 +181,7 @@ class WorkspacesAPI {
     return this.client.get(`/api/workspaces/${id}`, options);
   }
 
-  create(data: { name: string; team_id?: string; team_name?: string; system_prompt?: string }): Promise<{ id: string; name: string }> {
+  create(data: { name: string; model: string; team_id?: string; team_name?: string; system_prompt?: string }): Promise<{ id: string; name: string }> {
     return this.client.post('/api/workspaces', data);
   }
 
