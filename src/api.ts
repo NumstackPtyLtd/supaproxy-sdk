@@ -245,6 +245,29 @@ export interface CreateApiKeyResponse {
 
 // ── Generic ──
 
+export interface ProviderTypeInfo {
+  type: string;
+  name: string;
+  description: string;
+  configSchema: { fields: Array<{ name: string; label: string; type: string; required: boolean; placeholder?: string; helpText?: string }> };
+  models: Array<{ id: string; label: string; default?: boolean }>;
+}
+
+export interface ProviderTypesResponse {
+  providers: ProviderTypeInfo[];
+}
+
+export interface ConsumerTypeInfo {
+  type: string;
+  name: string;
+  description: string;
+  configSchema: { fields: Array<{ name: string; label: string; type: string; required: boolean; placeholder?: string; helpText?: string }> };
+}
+
+export interface ConsumerTypesResponse {
+  consumers: ConsumerTypeInfo[];
+}
+
 export interface ErrorResponse {
   error: string;
 }

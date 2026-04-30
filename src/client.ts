@@ -20,6 +20,7 @@ import type {
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
   ApiKeyListResponse, CreateApiKeyResponse,
   StatusResponse, ErrorResponse,
+  ProviderTypesResponse, ConsumerTypesResponse,
 } from './api.js';
 
 export interface ClientOptions {
@@ -51,6 +52,8 @@ export class SupaProxyClient {
   public conversations: ConversationsAPI;
   public connectors: ConnectorsAPI;
   public queues: QueuesAPI;
+  public providers: ProvidersAPI;
+  public consumerTypes: ConsumerTypesAPI;
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
@@ -65,6 +68,8 @@ export class SupaProxyClient {
     this.conversations = new ConversationsAPI(this);
     this.connectors = new ConnectorsAPI(this);
     this.queues = new QueuesAPI(this);
+    this.providers = new ProvidersAPI(this);
+    this.consumerTypes = new ConsumerTypesAPI(this);
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
@@ -302,5 +307,25 @@ class QueuesAPI {
 
   drain(name: string): Promise<StatusResponse> {
     return this.client.post(`/api/org/queues/${name}/drain`);
+  }
+}
+
+// ── Providers ──
+
+class ProvidersAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  types(options?: RequestOptions): Promise<ProviderTypesResponse> {
+    return this.client.get('/api/providers/types', options);
+  }
+}
+
+// ── Consumer Types ──
+
+class ConsumerTypesAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  list(options?: RequestOptions): Promise<ConsumerTypesResponse> {
+    return this.client.get('/api/consumers/types', options);
   }
 }
