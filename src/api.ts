@@ -200,6 +200,8 @@ export interface DashboardResponse {
 export interface QueryRequest {
   query: string;
   session_id?: string;
+  consumer_type?: string;
+  consumer_context?: Record<string, string>;
 }
 
 export interface QueryResponse {

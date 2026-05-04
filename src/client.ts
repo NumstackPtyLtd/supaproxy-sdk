@@ -160,6 +160,10 @@ class OrgAPI {
     return this.client.post('/api/org/integrations/slack/test', { bot_token: botToken });
   }
 
+  testIntegration(type: string, credentials: Record<string, string>): Promise<Record<string, string> & { error?: string }> {
+    return this.client.post('/api/org/integrations/test', { type, credentials });
+  }
+
   users(options?: RequestOptions): Promise<OrgUsersResponse> {
     return this.client.get('/api/org/users', options);
   }
@@ -271,18 +275,28 @@ class ConversationsAPI {
 class ConnectorsAPI {
   constructor(private client: SupaProxyClient) {}
 
-  testMcp(data: { transport: string; url?: string; command?: string; args?: string[] }): Promise<McpTestResponse> {
+  testMcp(data: { transport: string; url?: string; command?: string; args?: string[]; headers?: Record<string, string> }): Promise<McpTestResponse> {
     return this.client.post('/api/connectors/mcp/test', data);
   }
 
-  addMcp(data: { workspace_id: string; name: string; transport: string; url?: string; command?: string; args?: string[] }): Promise<SaveConnectionResponse> {
+  addMcp(data: { workspace_id: string; name: string; transport: string; url?: string; command?: string; args?: string[]; headers?: Record<string, string>; env?: Record<string, string> }): Promise<SaveConnectionResponse> {
     return this.client.post('/api/connectors/mcp', data);
   }
 
+  addConsumerChannel(data: { workspace_id: string; consumer_type: string; config: Record<string, string> }): Promise<StatusResponse> {
+    return this.client.post('/api/connectors/consumer/channel', data);
+  }
+
+  connectConsumer(data: { workspace_id: string; consumer_type: string; credentials: Record<string, string> }): Promise<StatusResponse> {
+    return this.client.post('/api/connectors/consumer', data);
+  }
+
+  /** @deprecated Use addConsumerChannel instead */
   addSlackChannel(data: { workspace_id: string; channel_id: string; channel_name?: string }): Promise<StatusResponse> {
     return this.client.post('/api/connectors/slack-channel', data);
   }
 
+  /** @deprecated Use connectConsumer instead */
   connectSlack(data: { workspace_id: string; bot_token: string; app_token: string; channel_id?: string }): Promise<StatusResponse> {
     return this.client.post('/api/connectors/slack', data);
   }
