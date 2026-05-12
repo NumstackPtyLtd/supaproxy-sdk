@@ -122,6 +122,10 @@ import type { Workspace, Conversation, QueryResponse } from '@supaproxy/sdk';
 - No request timeout configuration
 - No response caching
 
+## Documentation
+
+Full documentation at [docs.supaproxy.cloud](https://docs.supaproxy.cloud/sdk/overview).
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Managed by Numstack Pty Ltd.
