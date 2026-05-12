@@ -21,7 +21,9 @@ import type {
   ApiKeyListResponse, CreateApiKeyResponse,
   StatusResponse, ErrorResponse,
   ProviderTypesResponse, ConsumerTypesResponse,
+  PromptListResponse, PromptVersionsResponse, SavePromptRequest, SavePromptResponse, ActivatePromptResponse,
 } from './api.js';
+import type { PromptType, PromptScope } from './entities.js';
 
 export interface ClientOptions {
   baseUrl: string;
@@ -54,6 +56,7 @@ export class SupaProxyClient {
   public queues: QueuesAPI;
   public providers: ProvidersAPI;
   public consumerTypes: ConsumerTypesAPI;
+  public prompts: PromptsAPI;
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
@@ -70,6 +73,7 @@ export class SupaProxyClient {
     this.queues = new QueuesAPI(this);
     this.providers = new ProvidersAPI(this);
     this.consumerTypes = new ConsumerTypesAPI(this);
+    this.prompts = new PromptsAPI(this);
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
@@ -341,5 +345,35 @@ class ConsumerTypesAPI {
 
   list(options?: RequestOptions): Promise<ConsumerTypesResponse> {
     return this.client.get('/api/consumers/types', options);
+  }
+}
+
+// ── Prompts ──
+
+class PromptsAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  list(options?: RequestOptions): Promise<PromptListResponse> {
+    return this.client.get('/api/prompts', options);
+  }
+
+  versions(type: PromptType, params?: { scope?: PromptScope; scope_id?: string }, options?: RequestOptions): Promise<PromptVersionsResponse> {
+    const qs = new URLSearchParams();
+    if (params?.scope) qs.set('scope', params.scope);
+    if (params?.scope_id) qs.set('scope_id', params.scope_id);
+    const q = qs.toString();
+    return this.client.get(`/api/prompts/${type}/versions${q ? `?${q}` : ''}`, options);
+  }
+
+  save(type: PromptType, data: SavePromptRequest): Promise<SavePromptResponse> {
+    return this.client.put(`/api/prompts/${type}`, data);
+  }
+
+  activate(type: PromptType, id: string, params?: { scope?: PromptScope; scope_id?: string }): Promise<ActivatePromptResponse> {
+    const qs = new URLSearchParams();
+    if (params?.scope) qs.set('scope', params.scope);
+    if (params?.scope_id) qs.set('scope_id', params.scope_id);
+    const q = qs.toString();
+    return this.client.post(`/api/prompts/${type}/activate/${id}${q ? `?${q}` : ''}`);
   }
 }

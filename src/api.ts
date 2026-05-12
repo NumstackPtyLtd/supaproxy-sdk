@@ -245,6 +245,32 @@ export interface CreateApiKeyResponse {
   created_at: string;
 }
 
+// ── Prompts ──
+
+export interface PromptListResponse {
+  prompts: import('./entities').PromptTemplate[];
+}
+
+export interface PromptVersionsResponse {
+  versions: import('./entities').PromptTemplate[];
+}
+
+export interface SavePromptRequest {
+  content: string;
+  scope: 'org' | 'workspace';
+  scope_id?: string;
+  is_draft?: boolean;
+}
+
+export interface SavePromptResponse {
+  id: string;
+  version: number;
+}
+
+export interface ActivatePromptResponse {
+  status: 'activated';
+}
+
 // ── Generic ──
 
 export interface ProviderTypeInfo {
