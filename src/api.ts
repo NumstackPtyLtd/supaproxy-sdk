@@ -148,8 +148,11 @@ export interface GuardrailEvent {
   event_type: 'execution_blocked' | 'retrieval_stripped';
   plugin_id: string;
   tool_name: string | null;
+  tool_args: string | null;
+  connection_name: string | null;
   original_query: string | null;
   reason: string | null;
+  original_content: string | null;
   stripped_content: string | null;
   created_at?: string;
 }
