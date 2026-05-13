@@ -141,9 +141,23 @@ export interface KnowledgeResponse {
 
 // ── Compliance ──
 
+export interface GuardrailEvent {
+  id: string;
+  workspace_id: string;
+  conversation_id: string | null;
+  event_type: 'execution_blocked' | 'retrieval_stripped';
+  plugin_id: string;
+  tool_name: string | null;
+  original_query: string | null;
+  reason: string | null;
+  stripped_content: string | null;
+  created_at?: string;
+}
+
 export interface ComplianceResponse {
   guardrails: Guardrail[];
   violations: Array<ComplianceViolation & { conversation_id: string; user_name: string; timestamp: string }>;
+  guardrailEvents: GuardrailEvent[];
 }
 
 // ── Conversations ──
