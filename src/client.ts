@@ -22,6 +22,7 @@ import type {
   StatusResponse, ErrorResponse,
   ProviderTypesResponse, ConsumerTypesResponse,
   PromptListResponse, PromptVersionsResponse, SavePromptRequest, SavePromptResponse, ActivatePromptResponse,
+  RouteRequest, RouteResponse,
 } from './api.js';
 import type { PromptType, PromptScope } from './entities.js';
 
@@ -57,6 +58,7 @@ export class SupaProxyClient {
   public providers: ProvidersAPI;
   public consumerTypes: ConsumerTypesAPI;
   public prompts: PromptsAPI;
+  public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
@@ -74,6 +76,7 @@ export class SupaProxyClient {
     this.providers = new ProvidersAPI(this);
     this.consumerTypes = new ConsumerTypesAPI(this);
     this.prompts = new PromptsAPI(this);
+    this.route = new RouteAPI(this);
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
@@ -375,5 +378,15 @@ class PromptsAPI {
     if (params?.scope_id) qs.set('scope_id', params.scope_id);
     const q = qs.toString();
     return this.client.post(`/api/prompts/${type}/activate/${id}${q ? `?${q}` : ''}`);
+  }
+}
+
+// ── Route ──
+
+class RouteAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  send(data: RouteRequest, options?: RequestOptions): Promise<RouteResponse> {
+    return this.client.post('/api/route', data, options);
   }
 }
