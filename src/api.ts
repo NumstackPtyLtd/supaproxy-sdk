@@ -318,3 +318,17 @@ export interface StatusResponse {
   status: 'ok';
   message?: string;
 }
+
+// ── Route ──
+
+export interface RouteRequest {
+  query: string;
+}
+
+export interface RouteResponse {
+  answer: string;
+  conversation_id: string;
+  workspace_id: string;
+  routed: boolean;
+  routed_to: string | null;
+}

@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.3.0] - 2026-05-13
+
+### Added
+- `client.route.send({ query })` — sends a query through the routing layer (`POST /api/route`); returns `answer`, `conversation_id`, `workspace_id`, `routed`, and `routed_to`
+- `RouteRequest` and `RouteResponse` API types
+
 ## [0.2.0] - 2026-05-12
 
 ### Added
