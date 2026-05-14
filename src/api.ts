@@ -305,6 +305,34 @@ export interface ActivatePromptResponse {
   status: 'activated';
 }
 
+// ── Installed guardrails ──
+
+export interface InstalledGuardrailItem {
+  id: string;
+  org_id: string;
+  plugin_id: string;
+  package_name: string;
+  package_version: string;
+  plugin_metadata: {
+    name: string;
+    description: string;
+    author: string;
+    version: string;
+    stage: string;
+    configSchema: { fields: Array<{ name: string; label: string; type: string }> };
+  };
+  installed_by: string;
+  installed_at?: string;
+}
+
+export interface InstalledGuardrailListResponse {
+  installedGuardrails: InstalledGuardrailItem[];
+}
+
+export interface InstallGuardrailResponse {
+  guardrail: InstalledGuardrailItem;
+}
+
 // ── Guardrail policies ──
 
 export interface GuardrailPolicyListResponse {

@@ -24,6 +24,7 @@ import type {
   PromptListResponse, PromptVersionsResponse, SavePromptRequest, SavePromptResponse, ActivatePromptResponse,
   RouteRequest, RouteResponse,
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
+  InstalledGuardrailListResponse, InstallGuardrailResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -410,6 +411,18 @@ class PoliciesAPI {
     if (params?.days) qs.set('days', String(params.days));
     const q = qs.toString();
     return this.client.get(`/api/security-overview${q ? `?${q}` : ''}`, options);
+  }
+
+  listInstalled(options?: RequestOptions): Promise<InstalledGuardrailListResponse> {
+    return this.client.get('/api/installed-guardrails', options);
+  }
+
+  install(packageName: string): Promise<InstallGuardrailResponse> {
+    return this.client.post('/api/installed-guardrails', { package_name: packageName });
+  }
+
+  uninstall(pluginId: string): Promise<StatusResponse> {
+    return this.client.delete(`/api/installed-guardrails/${pluginId}`);
   }
 }
 
