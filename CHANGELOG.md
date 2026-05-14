@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.4.0] - 2026-05-14
+
+### Added
+- `DisplayField`, `DisplayFormat` types for plugin-driven event sidebar rendering
+- `EventAction`, `EventActionType` types for platform actions (flag, dismiss, block_connection)
+- `EventStatus` type (open, flagged, dismissed)
+- `ComplianceResponse.guardrailEventTotal` for server-side pagination
+
+### Breaking
+- `GuardrailEvent` type changed: flat fields (`tool_name`, `reason`, `stripped_content`, etc.) replaced with `context`, `outcome` (JSON bags), `display` (DisplayField[]), `actions` (EventAction[]), `status` (EventStatus)
+
 ## [0.3.0] - 2026-05-13
 
 ### Added
