@@ -141,19 +141,35 @@ export interface KnowledgeResponse {
 
 // ── Compliance ──
 
+export type DisplayFormat = 'text' | 'code' | 'pre' | 'danger' | 'warning' | 'badge';
+
+export interface DisplayField {
+  source: 'context' | 'outcome';
+  key: string;
+  label: string;
+  format: DisplayFormat;
+}
+
+export type EventActionType = 'flag' | 'dismiss' | 'block_connection';
+
+export interface EventAction {
+  type: EventActionType;
+  label: string;
+}
+
+export type EventStatus = 'open' | 'flagged' | 'dismissed';
+
 export interface GuardrailEvent {
   id: string;
   workspace_id: string;
   conversation_id: string | null;
   event_type: 'execution_blocked' | 'retrieval_stripped';
   plugin_id: string;
-  tool_name: string | null;
-  tool_args: string | null;
-  connection_name: string | null;
-  original_query: string | null;
-  reason: string | null;
-  original_content: string | null;
-  stripped_content: string | null;
+  context: Record<string, unknown>;
+  outcome: Record<string, unknown>;
+  display: DisplayField[];
+  actions: EventAction[];
+  status: EventStatus;
   created_at?: string;
 }
 
@@ -161,6 +177,7 @@ export interface ComplianceResponse {
   guardrails: Guardrail[];
   violations: Array<ComplianceViolation & { conversation_id: string; user_name: string; timestamp: string }>;
   guardrailEvents: GuardrailEvent[];
+  guardrailEventTotal: number;
 }
 
 // ── Conversations ──
