@@ -1,5 +1,5 @@
 /**
- * API response types — typed contracts between server and clients.
+ * API response types: typed contracts between server and clients.
  * Every endpoint has a corresponding response type here.
  */
 
@@ -320,14 +320,12 @@ export interface IntegrationListResponse {
   integrations: IntegrationItem[];
 }
 
-export type RoutingMode = 'receptionist' | 'direct';
-
 export interface EntryPointItem {
   id: string;
   integration_id: string;
   channel_id: string;
   channel_name: string | null;
-  routing_mode: RoutingMode;
+  direct: boolean;
   direct_workspace_id: string | null;
   integration_type?: string;
   created_at?: string;
