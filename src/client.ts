@@ -213,7 +213,7 @@ class WorkspacesAPI {
     return this.client.post('/api/workspaces', data);
   }
 
-  update(id: string, data: { name?: string; model?: string; system_prompt?: string; cold_timeout_minutes?: number; close_timeout_minutes?: number }): Promise<StatusResponse> {
+  update(id: string, data: { name?: string; model?: string; provider_type?: string | null; system_prompt?: string; cold_timeout_minutes?: number; close_timeout_minutes?: number }): Promise<StatusResponse> {
     return this.client.put(`/api/workspaces/${id}`, data);
   }
 
