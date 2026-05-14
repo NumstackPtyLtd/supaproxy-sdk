@@ -23,8 +23,9 @@ import type {
   ProviderTypesResponse, ConsumerTypesResponse,
   PromptListResponse, PromptVersionsResponse, SavePromptRequest, SavePromptResponse, ActivatePromptResponse,
   RouteRequest, RouteResponse,
+  GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
 } from './api.js';
-import type { PromptType, PromptScope } from './entities.js';
+import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
 export interface ClientOptions {
   baseUrl: string;
@@ -58,6 +59,7 @@ export class SupaProxyClient {
   public providers: ProvidersAPI;
   public consumerTypes: ConsumerTypesAPI;
   public prompts: PromptsAPI;
+  public policies: PoliciesAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
@@ -76,6 +78,7 @@ export class SupaProxyClient {
     this.providers = new ProvidersAPI(this);
     this.consumerTypes = new ConsumerTypesAPI(this);
     this.prompts = new PromptsAPI(this);
+    this.policies = new PoliciesAPI(this);
     this.route = new RouteAPI(this);
   }
 
@@ -378,6 +381,35 @@ class PromptsAPI {
     if (params?.scope_id) qs.set('scope_id', params.scope_id);
     const q = qs.toString();
     return this.client.post(`/api/prompts/${type}/activate/${id}${q ? `?${q}` : ''}`);
+  }
+}
+
+// ── Guardrail Policies ──
+
+class PoliciesAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  list(options?: RequestOptions): Promise<GuardrailPolicyListResponse> {
+    return this.client.get('/api/guardrail-policies', options);
+  }
+
+  setEnforcement(pluginId: string, enforcement: PolicyEnforcement): Promise<StatusResponse> {
+    return this.client.put(`/api/guardrail-policies/${pluginId}`, { enforcement });
+  }
+
+  compliance(pluginId: string, options?: RequestOptions): Promise<PolicyComplianceResponse> {
+    return this.client.get(`/api/guardrail-policies/${pluginId}/compliance`, options);
+  }
+
+  createOverride(pluginId: string, data: { workspace_id: string; justification: string }): Promise<StatusResponse> {
+    return this.client.post(`/api/guardrail-policies/${pluginId}/override`, data);
+  }
+
+  securityOverview(params?: { days?: number }, options?: RequestOptions): Promise<SecurityOverviewResponse> {
+    const qs = new URLSearchParams();
+    if (params?.days) qs.set('days', String(params.days));
+    const q = qs.toString();
+    return this.client.get(`/api/security-overview${q ? `?${q}` : ''}`, options);
   }
 }
 

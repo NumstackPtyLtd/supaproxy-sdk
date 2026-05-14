@@ -305,6 +305,44 @@ export interface ActivatePromptResponse {
   status: 'activated';
 }
 
+// ── Guardrail policies ──
+
+export interface GuardrailPolicyListResponse {
+  policies: import('./entities').GuardrailPolicy[];
+}
+
+export interface PolicyComplianceItem {
+  workspace_id: string;
+  workspace_name: string;
+  enabled: boolean;
+  has_override: boolean;
+}
+
+export interface PolicyComplianceResponse {
+  compliance: PolicyComplianceItem[];
+}
+
+export interface SecurityOverviewResponse {
+  total_events: number;
+  blocked_events: number;
+  stripped_events: number;
+  flagged_events: number;
+  events_by_day: Array<{ date: string; blocked: number; stripped: number }>;
+  top_workspaces: Array<{ workspace_id: string; workspace_name: string; event_count: number }>;
+  recent_flagged: Array<{
+    id: string;
+    workspace_id: string;
+    workspace_name: string;
+    event_type: string;
+    plugin_id: string;
+    status: string;
+    created_at: string;
+  }>;
+  compliance_score: number;
+  total_workspaces: number;
+  compliant_workspaces: number;
+}
+
 // ── Generic ──
 
 export interface ProviderTypeInfo {
