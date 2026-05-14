@@ -1,5 +1,5 @@
 /**
- * SupaProxy API client — typed SDK for all API interactions.
+ * SupaProxy API client: typed SDK for all API interactions.
  *
  * @alpha This SDK is in early development. No retry, rate limiting, or
  * error recovery. API surface may change without notice.
@@ -25,7 +25,7 @@ import type {
   RouteRequest, RouteResponse,
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
   InstalledGuardrailListResponse, InstallGuardrailResponse,
-  IntegrationListResponse, EntryPointListResponse, RoutingMode,
+  IntegrationListResponse, EntryPointListResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -455,11 +455,11 @@ class IntegrationsAPI {
     return this.client.get('/api/entry-points', options);
   }
 
-  createEntryPoint(data: { type: string; channel_id: string; channel_name?: string; routing_mode?: RoutingMode; direct_workspace_id?: string }): Promise<StatusResponse> {
+  createEntryPoint(data: { type: string; channel_id: string; channel_name?: string; direct?: boolean; direct_workspace_id?: string }): Promise<StatusResponse> {
     return this.client.post('/api/entry-points', data);
   }
 
-  updateEntryPoint(id: string, data: { channel_name?: string; routing_mode?: RoutingMode; direct_workspace_id?: string | null }): Promise<StatusResponse> {
+  updateEntryPoint(id: string, data: { channel_name?: string; direct?: boolean; direct_workspace_id?: string | null }): Promise<StatusResponse> {
     return this.client.put(`/api/entry-points/${id}`, data);
   }
 
