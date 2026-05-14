@@ -175,8 +175,13 @@ class OrgAPI {
     return this.client.post('/api/org/integrations/test', { type, credentials });
   }
 
-  users(options?: RequestOptions): Promise<OrgUsersResponse> {
-    return this.client.get('/api/org/users', options);
+  users(params?: { search?: string; limit?: number; page?: number }, options?: RequestOptions): Promise<OrgUsersResponse> {
+    const qs = new URLSearchParams();
+    if (params?.search) qs.set('search', params.search);
+    if (params?.limit) qs.set('limit', String(params.limit));
+    if (params?.page != null) qs.set('page', String(params.page));
+    const q = qs.toString();
+    return this.client.get(`/api/org/users${q ? `?${q}` : ''}`, options);
   }
 
   models(options?: RequestOptions): Promise<ModelsResponse> {
