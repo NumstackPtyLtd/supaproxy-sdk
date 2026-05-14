@@ -306,6 +306,37 @@ export interface ActivatePromptResponse {
   status: 'activated';
 }
 
+// ── Integrations and entry points ──
+
+export interface IntegrationItem {
+  id: string;
+  org_id: string;
+  type: string;
+  status: 'active' | 'inactive';
+  created_at?: string;
+}
+
+export interface IntegrationListResponse {
+  integrations: IntegrationItem[];
+}
+
+export type RoutingMode = 'receptionist' | 'direct';
+
+export interface EntryPointItem {
+  id: string;
+  integration_id: string;
+  channel_id: string;
+  channel_name: string | null;
+  routing_mode: RoutingMode;
+  direct_workspace_id: string | null;
+  integration_type?: string;
+  created_at?: string;
+}
+
+export interface EntryPointListResponse {
+  entryPoints: EntryPointItem[];
+}
+
 // ── Installed guardrails ──
 
 export interface InstalledGuardrailItem {
