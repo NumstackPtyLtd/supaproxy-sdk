@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.5.0] - 2026-05-14
+
+### Added
+- `client.policies.list()` — lists all guardrail policies for the org
+- `client.policies.setEnforcement(pluginId, enforcement)` — sets enforcement level (mandatory, recommended, off)
+- `client.policies.compliance(pluginId)` — gets per-workspace compliance for a policy
+- `client.policies.createOverride(pluginId, { workspace_id, justification })` — workspace admin justifies disabling a recommended policy
+- `client.policies.securityOverview({ days? })` — org-wide security pulse (events, compliance score, top workspaces)
+- `GuardrailPolicy`, `GuardrailPolicyOverride`, `PolicyEnforcement` entity types
+- `GuardrailPolicyListResponse`, `PolicyComplianceResponse`, `SecurityOverviewResponse` API response types
+
 ## [0.4.0] - 2026-05-14
 
 ### Added

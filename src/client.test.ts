@@ -57,6 +57,7 @@ describe('SupaProxyClient construction', () => {
     expect(client.queues).toBeDefined()
     expect(client.providers).toBeDefined()
     expect(client.consumerTypes).toBeDefined()
+    expect(client.policies).toBeDefined()
   })
 })
 
@@ -358,6 +359,55 @@ describe('ConsumerTypes API', () => {
     mockFetch.mockResolvedValueOnce(jsonResponse({ consumers: [] }))
     await client.consumerTypes.list()
     expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/consumers/types', expect.objectContaining({ method: 'GET' }))
+  })
+})
+
+describe('Policies API', () => {
+  const client = new SupaProxyClient('http://localhost:3001')
+
+  it('list calls GET /api/guardrail-policies', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ policies: [] }))
+    await client.policies.list()
+    expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/guardrail-policies', expect.objectContaining({ method: 'GET' }))
+  })
+
+  it('setEnforcement calls PUT /api/guardrail-policies/:pluginId', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ status: 'ok' }))
+    await client.policies.setEnforcement('pattern', 'mandatory')
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:3001/api/guardrail-policies/pattern',
+      expect.objectContaining({ method: 'PUT', body: JSON.stringify({ enforcement: 'mandatory' }) }),
+    )
+  })
+
+  it('compliance calls GET /api/guardrail-policies/:pluginId/compliance', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ compliance: [] }))
+    await client.policies.compliance('pattern')
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:3001/api/guardrail-policies/pattern/compliance',
+      expect.objectContaining({ method: 'GET' }),
+    )
+  })
+
+  it('createOverride calls POST /api/guardrail-policies/:pluginId/override', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ status: 'ok' }))
+    await client.policies.createOverride('pattern', { workspace_id: 'ws-1', justification: 'Not needed' })
+    expect(mockFetch).toHaveBeenCalledWith(
+      'http://localhost:3001/api/guardrail-policies/pattern/override',
+      expect.objectContaining({ method: 'POST', body: JSON.stringify({ workspace_id: 'ws-1', justification: 'Not needed' }) }),
+    )
+  })
+
+  it('securityOverview calls GET /api/security-overview', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ total_events: 0 }))
+    await client.policies.securityOverview()
+    expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/security-overview', expect.objectContaining({ method: 'GET' }))
+  })
+
+  it('securityOverview passes days param', async () => {
+    mockFetch.mockResolvedValueOnce(jsonResponse({ total_events: 0 }))
+    await client.policies.securityOverview({ days: 7 })
+    expect(mockFetch).toHaveBeenCalledWith('http://localhost:3001/api/security-overview?days=7', expect.objectContaining({ method: 'GET' }))
   })
 })
 

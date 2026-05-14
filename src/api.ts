@@ -305,6 +305,72 @@ export interface ActivatePromptResponse {
   status: 'activated';
 }
 
+// ── Installed guardrails ──
+
+export interface InstalledGuardrailItem {
+  id: string;
+  org_id: string;
+  plugin_id: string;
+  package_name: string;
+  package_version: string;
+  plugin_metadata: {
+    name: string;
+    description: string;
+    author: string;
+    version: string;
+    stage: string;
+    configSchema: { fields: Array<{ name: string; label: string; type: string }> };
+  };
+  installed_by: string;
+  installed_at?: string;
+}
+
+export interface InstalledGuardrailListResponse {
+  installedGuardrails: InstalledGuardrailItem[];
+}
+
+export interface InstallGuardrailResponse {
+  guardrail: InstalledGuardrailItem;
+}
+
+// ── Guardrail policies ──
+
+export interface GuardrailPolicyListResponse {
+  policies: import('./entities').GuardrailPolicy[];
+}
+
+export interface PolicyComplianceItem {
+  workspace_id: string;
+  workspace_name: string;
+  enabled: boolean;
+  has_override: boolean;
+}
+
+export interface PolicyComplianceResponse {
+  compliance: PolicyComplianceItem[];
+}
+
+export interface SecurityOverviewResponse {
+  total_events: number;
+  blocked_events: number;
+  stripped_events: number;
+  flagged_events: number;
+  events_by_day: Array<{ date: string; blocked: number; stripped: number }>;
+  top_workspaces: Array<{ workspace_id: string; workspace_name: string; event_count: number }>;
+  recent_flagged: Array<{
+    id: string;
+    workspace_id: string;
+    workspace_name: string;
+    event_type: string;
+    plugin_id: string;
+    status: string;
+    created_at: string;
+  }>;
+  compliance_score: number;
+  total_workspaces: number;
+  compliant_workspaces: number;
+}
+
 // ── Generic ──
 
 export interface ProviderTypeInfo {
