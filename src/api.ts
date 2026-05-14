@@ -55,6 +55,7 @@ export interface OrgSettingsResponse {
 
 export interface OrgUsersResponse {
   users: User[];
+  total: number;
 }
 
 // ── Models ──
