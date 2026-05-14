@@ -25,6 +25,7 @@ import type {
   RouteRequest, RouteResponse,
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
   InstalledGuardrailListResponse, InstallGuardrailResponse,
+  IntegrationListResponse, EntryPointListResponse, RoutingMode,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -61,6 +62,7 @@ export class SupaProxyClient {
   public consumerTypes: ConsumerTypesAPI;
   public prompts: PromptsAPI;
   public policies: PoliciesAPI;
+  public integrations: IntegrationsAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
@@ -80,6 +82,7 @@ export class SupaProxyClient {
     this.consumerTypes = new ConsumerTypesAPI(this);
     this.prompts = new PromptsAPI(this);
     this.policies = new PoliciesAPI(this);
+    this.integrations = new IntegrationsAPI(this);
     this.route = new RouteAPI(this);
   }
 
@@ -428,6 +431,40 @@ class PoliciesAPI {
 
   uninstall(pluginId: string): Promise<StatusResponse> {
     return this.client.delete(`/api/installed-guardrails/${pluginId}`);
+  }
+}
+
+// ── Integrations ──
+
+class IntegrationsAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  list(options?: RequestOptions): Promise<IntegrationListResponse> {
+    return this.client.get('/api/integrations', options);
+  }
+
+  activate(type: string): Promise<StatusResponse> {
+    return this.client.post(`/api/integrations/${type}/activate`);
+  }
+
+  deactivate(type: string): Promise<StatusResponse> {
+    return this.client.post(`/api/integrations/${type}/deactivate`);
+  }
+
+  entryPoints(options?: RequestOptions): Promise<EntryPointListResponse> {
+    return this.client.get('/api/entry-points', options);
+  }
+
+  createEntryPoint(data: { type: string; channel_id: string; channel_name?: string; routing_mode?: RoutingMode; direct_workspace_id?: string }): Promise<StatusResponse> {
+    return this.client.post('/api/entry-points', data);
+  }
+
+  updateEntryPoint(id: string, data: { channel_name?: string; routing_mode?: RoutingMode; direct_workspace_id?: string | null }): Promise<StatusResponse> {
+    return this.client.put(`/api/entry-points/${id}`, data);
+  }
+
+  deleteEntryPoint(id: string): Promise<StatusResponse> {
+    return this.client.delete(`/api/entry-points/${id}`);
   }
 }
 
