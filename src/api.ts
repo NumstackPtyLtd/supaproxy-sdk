@@ -140,6 +140,17 @@ export interface KnowledgeResponse {
   gaps: Array<KnowledgeGap & { conversation_id: string; user_name: string; timestamp: string }>;
 }
 
+export interface CreateKnowledgeSourceRequest {
+  name: string;
+  type: string;
+  content: string;
+}
+
+export interface CreateKnowledgeSourceResponse {
+  id: string;
+  chunksIndexed: number;
+}
+
 // ── Compliance ──
 
 export type DisplayFormat = 'text' | 'code' | 'pre' | 'danger' | 'warning' | 'badge';
