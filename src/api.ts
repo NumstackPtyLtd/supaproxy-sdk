@@ -412,6 +412,48 @@ export interface SecurityOverviewResponse {
   compliant_workspaces: number;
 }
 
+// ── Workspace guardrails ──
+
+export interface WorkspaceGuardrailsResponse {
+  guardrails: Array<{
+    id: string;
+    name: string;
+    enabled: boolean;
+    plugin_id: string;
+    stage: string;
+    config: Record<string, unknown>;
+  }>;
+}
+
+// ── Activity ──
+
+export interface ActivityItem {
+  id: string;
+  workspace_id: string;
+  type: string;
+  description: string;
+  user_id: string | null;
+  user_name: string | null;
+  created_at: string;
+}
+
+export interface ActivityResponse {
+  activity: ActivityItem[];
+}
+
+// ── Provider testing ──
+
+export interface ProviderTestResponse {
+  ok: boolean;
+  chat: boolean;
+  embedding: boolean;
+  models?: Array<{ id: string; name: string }>;
+}
+
+export interface ProviderModelsResponse {
+  models: Array<{ id: string; name: string }>;
+}
+
 // ── Generic ──
 
 export interface ProviderTypeInfo {

@@ -15,7 +15,7 @@ import type {
   OrgResponse, OrgSettingsResponse, OrgUsersResponse, ModelsResponse,
   WorkspaceListResponse, WorkspaceSummaryResponse, WorkspaceDetailResponse,
   ConnectionsResponse, McpTestResponse, SaveConnectionResponse,
-  ConsumersResponse, KnowledgeResponse, CreateKnowledgeSourceRequest, CreateKnowledgeSourceResponse, ComplianceResponse,
+  ConsumersResponse, KnowledgeResponse, CreateKnowledgeSourceRequest, CreateKnowledgeSourceResponse, ComplianceResponse, WorkspaceGuardrailsResponse, ActivityResponse,
   ConversationListResponse, ConversationDetailResponse, CloseConversationResponse,
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
   ApiKeyListResponse, CreateApiKeyResponse,
@@ -26,6 +26,7 @@ import type {
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
   InstalledGuardrailListResponse, InstallGuardrailResponse,
   IntegrationListResponse, EntryPointListResponse,
+  ProviderTestResponse, ProviderModelsResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -120,6 +121,7 @@ export class SupaProxyClient {
   get<T>(path: string, options?: RequestOptions): Promise<T> { return this.request<T>('GET', path, undefined, options); }
   post<T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> { return this.request<T>('POST', path, body, options); }
   put<T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> { return this.request<T>('PUT', path, body, options); }
+  patch<T>(path: string, body?: unknown, options?: RequestOptions): Promise<T> { return this.request<T>('PATCH', path, body, options); }
   delete<T>(path: string, options?: RequestOptions): Promise<T> { return this.request<T>('DELETE', path, undefined, options); }
 
   async health(options?: RequestOptions): Promise<HealthResponse> {
@@ -190,6 +192,14 @@ class OrgAPI {
   models(options?: RequestOptions): Promise<ModelsResponse> {
     return this.client.get('/api/models', options);
   }
+
+  testProvider(data: { type: string; api_key: string }): Promise<ProviderTestResponse> {
+    return this.client.post('/api/org/providers/test', data);
+  }
+
+  listProviderModels(data: { type: string; api_key: string }): Promise<ProviderModelsResponse> {
+    return this.client.post('/api/org/providers/models', data);
+  }
 }
 
 // ── Workspaces ──
@@ -239,6 +249,42 @@ class WorkspacesAPI {
 
   deleteKnowledgeSource(workspaceId: string, sourceId: string): Promise<{ deleted: boolean }> {
     return this.client.delete(`/api/workspaces/${workspaceId}/knowledge/${sourceId}`);
+  }
+
+  delete(id: string): Promise<StatusResponse> {
+    return this.client.delete(`/api/workspaces/${id}`);
+  }
+
+  publish(id: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${id}/publish`);
+  }
+
+  unpublish(id: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${id}/unpublish`);
+  }
+
+  guardrails(id: string, options?: RequestOptions): Promise<WorkspaceGuardrailsResponse> {
+    return this.client.get(`/api/workspaces/${id}/guardrails`, options);
+  }
+
+  enableGuardrail(workspaceId: string, guardrailId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/guardrails/${guardrailId}/enable`);
+  }
+
+  disableGuardrail(workspaceId: string, guardrailId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/guardrails/${guardrailId}/disable`);
+  }
+
+  updateGuardrailEventStatus(workspaceId: string, eventId: string, status: string): Promise<StatusResponse> {
+    return this.client.patch(`/api/workspaces/${workspaceId}/guardrail-events/${eventId}/status`, { status });
+  }
+
+  activity(id: string, params?: { limit?: number; offset?: number }, options?: RequestOptions): Promise<ActivityResponse> {
+    const qs = new URLSearchParams();
+    if (params?.limit) qs.set('limit', String(params.limit));
+    if (params?.offset) qs.set('offset', String(params.offset));
+    const q = qs.toString();
+    return this.client.get(`/api/workspaces/${id}/activity${q ? `?${q}` : ''}`, options);
   }
 
   compliance(id: string, options?: RequestOptions): Promise<ComplianceResponse> {
