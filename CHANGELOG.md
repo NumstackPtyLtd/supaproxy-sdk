@@ -4,6 +4,22 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.6.0] - 2026-05-17
+
+### Added
+- `client.workspaces.delete(id)`: deletes a workspace (`DELETE /api/workspaces/:id`)
+- `client.workspaces.publish(id)`: publishes a workspace (`POST /api/workspaces/:id/publish`)
+- `client.workspaces.unpublish(id)`: unpublishes a workspace (`POST /api/workspaces/:id/unpublish`)
+- `client.workspaces.guardrails(id)`: lists guardrails for a workspace (`GET /api/workspaces/:id/guardrails`)
+- `client.workspaces.enableGuardrail(workspaceId, guardrailId)`: enables a guardrail (`POST /api/workspaces/:id/guardrails/:guardrailId/enable`)
+- `client.workspaces.disableGuardrail(workspaceId, guardrailId)`: disables a guardrail (`POST /api/workspaces/:id/guardrails/:guardrailId/disable`)
+- `client.workspaces.updateGuardrailEventStatus(workspaceId, eventId, status)`: updates guardrail event status (`PATCH /api/workspaces/:id/guardrail-events/:eventId/status`)
+- `client.workspaces.activity(id, { limit?, offset? })`: fetches workspace activity (`GET /api/workspaces/:id/activity`)
+- `client.org.testProvider({ type, api_key })`: tests a provider connection (`POST /api/org/providers/test`)
+- `client.org.listProviderModels({ type, api_key })`: lists models for a provider (`POST /api/org/providers/models`)
+- `WorkspaceGuardrailsResponse`, `ActivityResponse`, `ProviderTestResponse`, `ProviderModelsResponse` API response types
+- `patch()` convenience method on `SupaProxyClient` for PATCH requests
+
 ## [0.5.0] - 2026-05-14
 
 ### Added
