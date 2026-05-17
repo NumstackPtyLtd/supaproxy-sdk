@@ -5,7 +5,7 @@
 
 TypeScript SDK for [SupaProxy](https://github.com/NumstackPtyLtd/supaproxy-server). Typed API client for building dashboards and integrations.
 
-> **Alpha** — API surface may change without notice.
+> **Alpha**: API surface may change without notice.
 
 ## Install
 
@@ -69,10 +69,10 @@ const settings = await client.org.settings();
 
 ## API keys
 
-Workspace API keys allow programmatic access without a session cookie — used by the MCP server and external integrations.
+Workspace API keys allow programmatic access without a session cookie, used by the MCP server and external integrations.
 
 ```typescript
-// Create a key (full key returned once — store it securely)
+// Create a key (full key returned once, store it securely)
 const { id, key, prefix, label } = await client.workspaces.apiKeys.create('ws-id', {
   label: 'My integration',
 });
@@ -85,7 +85,7 @@ const testKey = await client.workspaces.apiKeys.create('ws-id', {
 });
 // key looks like: sp_test_a1b2c3d4...
 
-// List active keys (prefix and metadata only — raw key not returned)
+// List active keys (prefix and metadata only, raw key not returned)
 const { keys } = await client.workspaces.apiKeys.list('ws-id');
 // keys: [{ id, prefix: 'sp_live_a1b2', label, created_at, last_used_at }]
 
@@ -109,7 +109,7 @@ try {
 
 ## Types
 
-The SDK re-exports all shared types — entities, API contracts, and config types:
+The SDK re-exports all shared types: entities, API contracts, and config types:
 
 ```typescript
 import type { Workspace, Conversation, QueryResponse } from '@supaproxy/sdk';
@@ -128,4 +128,4 @@ Full documentation at [docs.supaproxy.cloud](https://docs.supaproxy.cloud/sdk/ov
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Managed by Numstack Pty Ltd.
+MIT. See [LICENSE](LICENSE). Managed by Numstack Pty Ltd.
