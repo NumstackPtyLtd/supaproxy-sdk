@@ -15,7 +15,7 @@ import type {
   OrgResponse, OrgSettingsResponse, OrgUsersResponse, ModelsResponse,
   WorkspaceListResponse, WorkspaceSummaryResponse, WorkspaceDetailResponse,
   ConnectionsResponse, McpTestResponse, SaveConnectionResponse,
-  ConsumersResponse, KnowledgeResponse, ComplianceResponse,
+  ConsumersResponse, KnowledgeResponse, CreateKnowledgeSourceRequest, CreateKnowledgeSourceResponse, ComplianceResponse,
   ConversationListResponse, ConversationDetailResponse, CloseConversationResponse,
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
   ApiKeyListResponse, CreateApiKeyResponse,
@@ -231,6 +231,14 @@ class WorkspacesAPI {
 
   knowledge(id: string, options?: RequestOptions): Promise<KnowledgeResponse> {
     return this.client.get(`/api/workspaces/${id}/knowledge`, options);
+  }
+
+  createKnowledgeSource(id: string, data: CreateKnowledgeSourceRequest): Promise<CreateKnowledgeSourceResponse> {
+    return this.client.post(`/api/workspaces/${id}/knowledge`, data);
+  }
+
+  deleteKnowledgeSource(workspaceId: string, sourceId: string): Promise<{ deleted: boolean }> {
+    return this.client.delete(`/api/workspaces/${workspaceId}/knowledge/${sourceId}`);
   }
 
   compliance(id: string, options?: RequestOptions): Promise<ComplianceResponse> {
