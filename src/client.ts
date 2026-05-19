@@ -550,6 +550,10 @@ class MarketplaceAPI {
   listInstalled(options?: RequestOptions): Promise<InstalledGuardrailListResponse> {
     return this.client.get('/api/installed-guardrails', options);
   }
+
+  upgrade(pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/installed-guardrails/${pluginId}/upgrade`);
+  }
 }
 
 // ── Route ──
