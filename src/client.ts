@@ -25,6 +25,7 @@ import type {
   RouteRequest, RouteResponse,
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
   InstalledGuardrailListResponse, InstallGuardrailResponse,
+  MarketplaceListResponse, MarketplacePlugin,
   IntegrationListResponse, EntryPointListResponse,
   ProviderTestResponse, ProviderModelsResponse,
 } from './api.js';
@@ -64,6 +65,7 @@ export class SupaProxyClient {
   public prompts: PromptsAPI;
   public policies: PoliciesAPI;
   public integrations: IntegrationsAPI;
+  public marketplace: MarketplaceAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
@@ -84,6 +86,7 @@ export class SupaProxyClient {
     this.prompts = new PromptsAPI(this);
     this.policies = new PoliciesAPI(this);
     this.integrations = new IntegrationsAPI(this);
+    this.marketplace = new MarketplaceAPI(this);
     this.route = new RouteAPI(this);
   }
 
@@ -479,8 +482,8 @@ class PoliciesAPI {
     return this.client.get('/api/installed-guardrails', options);
   }
 
-  install(packageName: string): Promise<InstallGuardrailResponse> {
-    return this.client.post('/api/installed-guardrails', { package_name: packageName });
+  install(pluginId: string): Promise<InstallGuardrailResponse> {
+    return this.client.post('/api/installed-guardrails', { plugin_id: pluginId });
   }
 
   uninstall(pluginId: string): Promise<StatusResponse> {
@@ -519,6 +522,33 @@ class IntegrationsAPI {
 
   deleteEntryPoint(id: string): Promise<StatusResponse> {
     return this.client.delete(`/api/entry-points/${id}`);
+  }
+}
+
+// ── Marketplace ──
+
+class MarketplaceAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  browse(search?: string, options?: RequestOptions): Promise<MarketplaceListResponse> {
+    const qs = search ? `?search=${encodeURIComponent(search)}` : '';
+    return this.client.get(`/api/marketplace${qs}`, options);
+  }
+
+  get(pluginId: string, options?: RequestOptions): Promise<MarketplacePlugin> {
+    return this.client.get(`/api/marketplace/${pluginId}`, options);
+  }
+
+  install(pluginId: string): Promise<InstallGuardrailResponse> {
+    return this.client.post('/api/installed-guardrails', { plugin_id: pluginId });
+  }
+
+  uninstall(pluginId: string): Promise<StatusResponse> {
+    return this.client.delete(`/api/installed-guardrails/${pluginId}`);
+  }
+
+  listInstalled(options?: RequestOptions): Promise<InstalledGuardrailListResponse> {
+    return this.client.get('/api/installed-guardrails', options);
   }
 }
 

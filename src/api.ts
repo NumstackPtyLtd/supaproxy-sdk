@@ -374,6 +374,28 @@ export interface InstallGuardrailResponse {
   guardrail: InstalledGuardrailItem;
 }
 
+// ── Marketplace ──
+
+export interface MarketplacePlugin {
+  id: string;
+  packageName: string;
+  name: string;
+  description: string;
+  author: string;
+  version: string;
+  stage: string;
+  verified: boolean;
+  category: string;
+  tags: string[];
+  source: string;
+  icon?: string;
+  destination?: { type: string; href: string; label: string };
+}
+
+export interface MarketplaceListResponse {
+  plugins: MarketplacePlugin[];
+}
+
 // ── Guardrail policies ──
 
 export interface GuardrailPolicyListResponse {
