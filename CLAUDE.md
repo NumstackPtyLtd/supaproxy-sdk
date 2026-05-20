@@ -82,7 +82,4 @@ Use the `/publish-package` skill in the docs repo (supaproxy) for a guided workf
 
 ## Skills
 
-| Skill | Purpose |
-|---|---|
-| `/audit-sdk` | Type completeness, export coverage, server route alignment, build check |
-| `/add-method` | Scaffold a new SDK method with types and exports |
+> Skills now live in the central [supaproxy governance repo](https://github.com/NumstackPtyLtd/supaproxy).
