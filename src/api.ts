@@ -390,35 +390,10 @@ export interface MarketplacePlugin {
   source: string;
   icon?: string;
   destination?: { type: string; href: string; label: string };
-  configSchema?: { fields: Array<{ name: string; label: string; type: string; required?: boolean; placeholder?: string; helpText?: string }> };
-  hasOAuth?: boolean;
-  syncSchema?: Record<string, unknown>;
-  postInstall?: import('./types').PostInstall;
 }
 
 export interface MarketplaceListResponse {
   plugins: MarketplacePlugin[];
-}
-
-// ── Knowledge sync ──
-
-export interface KnowledgeSourcesResponse {
-  sources: import('./types').KnowledgeSourceInfo[];
-}
-
-export interface KnowledgeBrowseResponse {
-  units: import('./types').KnowledgeUnit[];
-}
-
-export interface KnowledgeSyncConfigResponse {
-  config: import('./types').SyncConfig;
-}
-
-export interface KnowledgeSyncStatusResponse {
-  status: string;
-  lastSyncedAt: string | null;
-  syncChunkCount: number;
-  errorMessage: string | null;
 }
 
 // ── Guardrail policies ──
