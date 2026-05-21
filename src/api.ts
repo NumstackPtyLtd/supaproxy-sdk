@@ -444,6 +444,43 @@ export interface EnableKnowledgeSourceResponse {
   status: string;
 }
 
+export interface SyncHistoryEntry {
+  id: string;
+  configId: string;
+  orgId: string;
+  pluginId: string;
+  status: 'success' | 'error';
+  chunksIndexed: number;
+  durationMs: number;
+  errorMessage: string | null;
+  syncedAt: string;
+}
+
+export interface SyncHistoryResponse {
+  entries: SyncHistoryEntry[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface KnowledgeHealthSource {
+  pluginId: string;
+  status: string;
+  lastSyncedAt: string | null;
+  syncChunkCount: number;
+  frequency: string;
+  errorMessage: string | null;
+}
+
+export interface KnowledgeHealthResponse {
+  sourcesConnected: number;
+  totalChunks: number;
+  errorsLast24h: number;
+  successLast24h: number;
+  staleCount: number;
+  sources: KnowledgeHealthSource[];
+}
+
 // ── Guardrail policies ──
 
 export interface GuardrailPolicyListResponse {
