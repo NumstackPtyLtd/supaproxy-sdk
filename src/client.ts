@@ -30,6 +30,7 @@ import type {
   ProviderTestResponse, ProviderModelsResponse,
   KnowledgeSourcesResponse, KnowledgeBrowseResponse, KnowledgeSyncConfigResponse, KnowledgeSyncStatusResponse,
   AvailableKnowledgeResponse, EnableKnowledgeSourceResponse,
+  SyncHistoryResponse, KnowledgeHealthResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -595,6 +596,15 @@ class KnowledgeAPI {
 
   triggerSync(pluginId: string): Promise<StatusResponse> {
     return this.client.post(`/api/knowledge/sources/${pluginId}/sync`);
+  }
+
+  syncHistory(pluginId: string, page?: number, options?: RequestOptions): Promise<SyncHistoryResponse> {
+    const qs = page ? `?page=${page}` : '';
+    return this.client.get(`/api/knowledge/sources/${pluginId}/history${qs}`, options);
+  }
+
+  health(options?: RequestOptions): Promise<KnowledgeHealthResponse> {
+    return this.client.get('/api/knowledge/health', options);
   }
 }
 
