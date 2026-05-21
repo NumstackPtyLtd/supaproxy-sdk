@@ -25,7 +25,7 @@ import type {
   RouteRequest, RouteResponse,
   GuardrailPolicyListResponse, PolicyComplianceResponse, SecurityOverviewResponse,
   InstalledGuardrailListResponse, InstallGuardrailResponse,
-  MarketplaceListResponse, MarketplacePlugin,
+  MarketplaceListResponse, MarketplacePlugin, OAuthStatusResponse,
   IntegrationListResponse, EntryPointListResponse,
   ProviderTestResponse, ProviderModelsResponse,
 } from './api.js';
@@ -66,6 +66,7 @@ export class SupaProxyClient {
   public policies: PoliciesAPI;
   public integrations: IntegrationsAPI;
   public marketplace: MarketplaceAPI;
+  public oauth: OAuthAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
@@ -87,6 +88,7 @@ export class SupaProxyClient {
     this.policies = new PoliciesAPI(this);
     this.integrations = new IntegrationsAPI(this);
     this.marketplace = new MarketplaceAPI(this);
+    this.oauth = new OAuthAPI(this);
     this.route = new RouteAPI(this);
   }
 
@@ -553,6 +555,20 @@ class MarketplaceAPI {
 
   upgrade(pluginId: string): Promise<StatusResponse> {
     return this.client.post(`/api/installed-guardrails/${pluginId}/upgrade`);
+  }
+}
+
+// ── OAuth ──
+
+class OAuthAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  status(pluginId: string, options?: RequestOptions): Promise<OAuthStatusResponse> {
+    return this.client.get(`/api/oauth/${pluginId}/status`, options);
+  }
+
+  disconnect(pluginId: string): Promise<StatusResponse> {
+    return this.client.delete(`/api/oauth/${pluginId}`);
   }
 }
 
