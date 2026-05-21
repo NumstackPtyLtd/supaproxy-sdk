@@ -28,6 +28,7 @@ import type {
   MarketplaceListResponse, MarketplacePlugin,
   IntegrationListResponse, EntryPointListResponse,
   ProviderTestResponse, ProviderModelsResponse,
+  KnowledgeSourcesResponse, KnowledgeBrowseResponse, KnowledgeSyncConfigResponse, KnowledgeSyncStatusResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -66,6 +67,7 @@ export class SupaProxyClient {
   public policies: PoliciesAPI;
   public integrations: IntegrationsAPI;
   public marketplace: MarketplaceAPI;
+  public knowledge: KnowledgeAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
@@ -87,6 +89,7 @@ export class SupaProxyClient {
     this.policies = new PoliciesAPI(this);
     this.integrations = new IntegrationsAPI(this);
     this.marketplace = new MarketplaceAPI(this);
+    this.knowledge = new KnowledgeAPI(this);
     this.route = new RouteAPI(this);
   }
 
@@ -553,6 +556,32 @@ class MarketplaceAPI {
 
   upgrade(pluginId: string): Promise<StatusResponse> {
     return this.client.post(`/api/installed-guardrails/${pluginId}/upgrade`);
+  }
+}
+
+// ── Knowledge sync ──
+
+class KnowledgeAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  listSources(options?: RequestOptions): Promise<KnowledgeSourcesResponse> {
+    return this.client.get('/api/knowledge/sources', options);
+  }
+
+  browse(pluginId: string, options?: RequestOptions): Promise<KnowledgeBrowseResponse> {
+    return this.client.get(`/api/knowledge/sources/${pluginId}/browse`, options);
+  }
+
+  saveSyncConfig(pluginId: string, data: { selectedUnits: string[]; frequency: string; policy?: { syncRoot: string; exceptFor: string[] } }): Promise<KnowledgeSyncConfigResponse> {
+    return this.client.put(`/api/knowledge/sources/${pluginId}/sync-config`, data);
+  }
+
+  syncStatus(pluginId: string, options?: RequestOptions): Promise<KnowledgeSyncStatusResponse> {
+    return this.client.get(`/api/knowledge/sources/${pluginId}/sync-status`, options);
+  }
+
+  triggerSync(pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/knowledge/sources/${pluginId}/sync`);
   }
 }
 
