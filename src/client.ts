@@ -29,6 +29,7 @@ import type {
   IntegrationListResponse, EntryPointListResponse,
   ProviderTestResponse, ProviderModelsResponse,
   KnowledgeSourcesResponse, KnowledgeBrowseResponse, KnowledgeSyncConfigResponse, KnowledgeSyncStatusResponse,
+  AvailableKnowledgeResponse, EnableKnowledgeSourceResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -255,6 +256,18 @@ class WorkspacesAPI {
 
   deleteKnowledgeSource(workspaceId: string, sourceId: string): Promise<{ deleted: boolean }> {
     return this.client.delete(`/api/workspaces/${workspaceId}/knowledge/${sourceId}`);
+  }
+
+  availableKnowledge(workspaceId: string, options?: RequestOptions): Promise<AvailableKnowledgeResponse> {
+    return this.client.get(`/api/workspaces/${workspaceId}/knowledge/available`, options);
+  }
+
+  enableKnowledgeSource(workspaceId: string, pluginId: string): Promise<EnableKnowledgeSourceResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/knowledge/${pluginId}/enable`);
+  }
+
+  disableKnowledgeSource(workspaceId: string, pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/knowledge/${pluginId}/disable`);
   }
 
   delete(id: string): Promise<StatusResponse> {
