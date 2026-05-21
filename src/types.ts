@@ -172,13 +172,6 @@ export interface KnowledgeSourceInfo {
   syncConfig: SyncConfig | null
 }
 
-export interface SyncStatus {
-  status: string
-  lastSyncedAt: string | null
-  syncChunkCount: number
-  errorMessage: string | null
-}
-
 export interface PostInstall {
   heading: string
   body: string

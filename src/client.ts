@@ -52,9 +52,11 @@ export class SupaProxyError extends Error {
 }
 
 export class SupaProxyClient {
-  private baseUrl: string;
+  private readonly _baseUrl: string;
   private credentials: RequestCredentials;
   private headers: Record<string, string>;
+
+  get baseUrl(): string { return this._baseUrl; }
 
   public auth: AuthAPI;
   public org: OrgAPI;
@@ -75,7 +77,7 @@ export class SupaProxyClient {
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
-    this.baseUrl = opts.baseUrl.replace(/\/$/, '');
+    this._baseUrl = opts.baseUrl.replace(/\/$/, '');
     this.credentials = opts.credentials ?? 'include';
     this.headers = opts.headers ?? {};
 
@@ -98,7 +100,7 @@ export class SupaProxyClient {
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
-    const url = `${this.baseUrl}${path}`;
+    const url = `${this._baseUrl}${path}`;
     const init: RequestInit = {
       method,
       credentials: this.credentials,
@@ -157,7 +159,7 @@ class AuthAPI {
   }
 
   logoutUrl(): string {
-    return `${(this.client as any).baseUrl}/api/auth/logout`;
+    return `${this.client.baseUrl}/api/auth/logout`;
   }
 }
 
@@ -621,6 +623,10 @@ class OAuthAPI {
 
   status(pluginId: string, options?: RequestOptions): Promise<{ connected: boolean; site: string | null }> {
     return this.client.get(`/api/oauth/${pluginId}/status`, options);
+  }
+
+  refresh(pluginId: string): Promise<{ refreshed: boolean }> {
+    return this.client.post(`/api/oauth/${pluginId}/refresh`);
   }
 }
 
