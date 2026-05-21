@@ -390,10 +390,96 @@ export interface MarketplacePlugin {
   source: string;
   icon?: string;
   destination?: { type: string; href: string; label: string };
+  configSchema?: { fields: Array<{ name: string; label: string; type: string; required?: boolean; placeholder?: string; helpText?: string }> };
+  hasOAuth?: boolean;
+  syncSchema?: Record<string, unknown>;
+  postInstall?: import('./types').PostInstall;
+  display?: 'modal' | 'slideover';
 }
 
 export interface MarketplaceListResponse {
   plugins: MarketplacePlugin[];
+}
+
+// ── Knowledge sync ──
+
+export interface KnowledgeSourcesResponse {
+  sources: import('./types').KnowledgeSourceInfo[];
+}
+
+export interface KnowledgeBrowseResponse {
+  units: import('./types').KnowledgeUnit[];
+}
+
+export interface KnowledgeSyncConfigResponse {
+  config: import('./types').SyncConfig;
+}
+
+export interface KnowledgeSyncStatusResponse {
+  status: string;
+  lastSyncedAt: string | null;
+  syncChunkCount: number;
+  errorMessage: string | null;
+}
+
+export interface AvailableKnowledgeSource {
+  pluginId: string;
+  syncConfigId: string;
+  selectedUnits: string[];
+  frequency: string;
+  status: string;
+  syncChunkCount: number;
+  lastSyncedAt: string | null;
+  enabled: boolean;
+  sourceId: string | null;
+  workspaceStatus: string | null;
+  workspaceChunks: number;
+}
+
+export interface AvailableKnowledgeResponse {
+  available: AvailableKnowledgeSource[];
+}
+
+export interface EnableKnowledgeSourceResponse {
+  sourceId: string;
+  status: string;
+}
+
+export interface SyncHistoryEntry {
+  id: string;
+  configId: string;
+  orgId: string;
+  pluginId: string;
+  status: 'success' | 'error';
+  chunksIndexed: number;
+  durationMs: number;
+  errorMessage: string | null;
+  syncedAt: string;
+}
+
+export interface SyncHistoryResponse {
+  entries: SyncHistoryEntry[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface KnowledgeHealthSource {
+  pluginId: string;
+  status: string;
+  lastSyncedAt: string | null;
+  syncChunkCount: number;
+  frequency: string;
+  errorMessage: string | null;
+}
+
+export interface KnowledgeHealthResponse {
+  sourcesConnected: number;
+  totalChunks: number;
+  errorsLast24h: number;
+  successLast24h: number;
+  staleCount: number;
+  sources: KnowledgeHealthSource[];
 }
 
 // ── Guardrail policies ──
