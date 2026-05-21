@@ -390,6 +390,22 @@ export interface MarketplacePlugin {
   source: string;
   icon?: string;
   destination?: { type: string; href: string; label: string };
+  configSchema?: {
+    fields: Array<{
+      name: string;
+      label: string;
+      type: string;
+      required?: boolean;
+      placeholder?: string;
+      helpText?: string;
+    }>;
+  };
+  hasOAuth?: boolean;
+}
+
+export interface OAuthStatusResponse {
+  connected: boolean;
+  site: string | null;
 }
 
 export interface MarketplaceListResponse {
