@@ -421,6 +421,29 @@ export interface KnowledgeSyncStatusResponse {
   errorMessage: string | null;
 }
 
+export interface AvailableKnowledgeSource {
+  pluginId: string;
+  syncConfigId: string;
+  selectedUnits: string[];
+  frequency: string;
+  status: string;
+  syncChunkCount: number;
+  lastSyncedAt: string | null;
+  enabled: boolean;
+  sourceId: string | null;
+  workspaceStatus: string | null;
+  workspaceChunks: number;
+}
+
+export interface AvailableKnowledgeResponse {
+  available: AvailableKnowledgeSource[];
+}
+
+export interface EnableKnowledgeSourceResponse {
+  sourceId: string;
+  status: string;
+}
+
 // ── Guardrail policies ──
 
 export interface GuardrailPolicyListResponse {
