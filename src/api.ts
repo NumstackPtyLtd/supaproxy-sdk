@@ -395,6 +395,7 @@ export interface MarketplacePlugin {
   syncSchema?: Record<string, unknown>;
   postInstall?: import('./types').PostInstall;
   display?: 'modal' | 'slideover';
+  canRemove?: boolean;
 }
 
 export interface MarketplaceListResponse {
