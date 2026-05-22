@@ -28,6 +28,9 @@ import type {
   MarketplaceListResponse, MarketplacePlugin,
   IntegrationListResponse, EntryPointListResponse,
   ProviderTestResponse, ProviderModelsResponse,
+  KnowledgeSourcesResponse, KnowledgeBrowseResponse, KnowledgeSyncConfigResponse, KnowledgeSyncStatusResponse,
+  AvailableKnowledgeResponse, EnableKnowledgeSourceResponse,
+  SyncHistoryResponse, KnowledgeHealthResponse,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -49,9 +52,11 @@ export class SupaProxyError extends Error {
 }
 
 export class SupaProxyClient {
-  private baseUrl: string;
+  private readonly _baseUrl: string;
   private credentials: RequestCredentials;
   private headers: Record<string, string>;
+
+  get baseUrl(): string { return this._baseUrl; }
 
   public auth: AuthAPI;
   public org: OrgAPI;
@@ -66,11 +71,13 @@ export class SupaProxyClient {
   public policies: PoliciesAPI;
   public integrations: IntegrationsAPI;
   public marketplace: MarketplaceAPI;
+  public knowledge: KnowledgeAPI;
+  public oauth: OAuthAPI;
   public route: RouteAPI;
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
-    this.baseUrl = opts.baseUrl.replace(/\/$/, '');
+    this._baseUrl = opts.baseUrl.replace(/\/$/, '');
     this.credentials = opts.credentials ?? 'include';
     this.headers = opts.headers ?? {};
 
@@ -87,11 +94,13 @@ export class SupaProxyClient {
     this.policies = new PoliciesAPI(this);
     this.integrations = new IntegrationsAPI(this);
     this.marketplace = new MarketplaceAPI(this);
+    this.knowledge = new KnowledgeAPI(this);
+    this.oauth = new OAuthAPI(this);
     this.route = new RouteAPI(this);
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
-    const url = `${this.baseUrl}${path}`;
+    const url = `${this._baseUrl}${path}`;
     const init: RequestInit = {
       method,
       credentials: this.credentials,
@@ -150,7 +159,7 @@ class AuthAPI {
   }
 
   logoutUrl(): string {
-    return `${(this.client as any).baseUrl}/api/auth/logout`;
+    return `${this.client.baseUrl}/api/auth/logout`;
   }
 }
 
@@ -252,6 +261,18 @@ class WorkspacesAPI {
 
   deleteKnowledgeSource(workspaceId: string, sourceId: string): Promise<{ deleted: boolean }> {
     return this.client.delete(`/api/workspaces/${workspaceId}/knowledge/${sourceId}`);
+  }
+
+  availableKnowledge(workspaceId: string, options?: RequestOptions): Promise<AvailableKnowledgeResponse> {
+    return this.client.get(`/api/workspaces/${workspaceId}/knowledge/available`, options);
+  }
+
+  enableKnowledgeSource(workspaceId: string, pluginId: string): Promise<EnableKnowledgeSourceResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/knowledge/${pluginId}/enable`);
+  }
+
+  disableKnowledgeSource(workspaceId: string, pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/workspaces/${workspaceId}/knowledge/${pluginId}/disable`);
   }
 
   delete(id: string): Promise<StatusResponse> {
@@ -556,7 +577,58 @@ class MarketplaceAPI {
   }
 }
 
+// ── Knowledge sync ──
+
+class KnowledgeAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  listSources(options?: RequestOptions): Promise<KnowledgeSourcesResponse> {
+    return this.client.get('/api/knowledge/sources', options);
+  }
+
+  browse(pluginId: string, options?: RequestOptions): Promise<KnowledgeBrowseResponse> {
+    return this.client.get(`/api/knowledge/sources/${pluginId}/browse`, options);
+  }
+
+  saveSyncConfig(pluginId: string, data: { selectedUnits: string[]; frequency: string; policy?: { syncRoot: string; exceptFor: string[] } }): Promise<KnowledgeSyncConfigResponse> {
+    return this.client.put(`/api/knowledge/sources/${pluginId}/sync-config`, data);
+  }
+
+  syncStatus(pluginId: string, options?: RequestOptions): Promise<KnowledgeSyncStatusResponse> {
+    return this.client.get(`/api/knowledge/sources/${pluginId}/sync-status`, options);
+  }
+
+  triggerSync(pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/knowledge/sources/${pluginId}/sync`);
+  }
+
+  syncHistory(pluginId: string, page?: number, options?: RequestOptions): Promise<SyncHistoryResponse> {
+    const qs = page ? `?page=${page}` : '';
+    return this.client.get(`/api/knowledge/sources/${pluginId}/history${qs}`, options);
+  }
+
+  health(options?: RequestOptions): Promise<KnowledgeHealthResponse> {
+    return this.client.get('/api/knowledge/health', options);
+  }
+}
+
 // ── Route ──
+
+class OAuthAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  disconnect(pluginId: string): Promise<{ disconnected: boolean }> {
+    return this.client.delete(`/api/oauth/${pluginId}`);
+  }
+
+  status(pluginId: string, options?: RequestOptions): Promise<{ connected: boolean; site: string | null }> {
+    return this.client.get(`/api/oauth/${pluginId}/status`, options);
+  }
+
+  refresh(pluginId: string): Promise<{ refreshed: boolean }> {
+    return this.client.post(`/api/oauth/${pluginId}/refresh`);
+  }
+}
 
 class RouteAPI {
   constructor(private client: SupaProxyClient) {}

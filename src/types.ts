@@ -145,6 +145,41 @@ export interface AuditEntry {
   error: string | null
 }
 
+// Knowledge sync
+export interface KnowledgeUnit {
+  id: string
+  name: string
+  path: string
+}
+
+export interface SyncConfig {
+  id: string
+  selectedUnits: string[]
+  frequency: string
+  policy: { syncRoot: string; exceptFor: string[] }
+  status: 'idle' | 'syncing' | 'synced' | 'error'
+  lastSyncedAt: string | null
+  syncChunkCount: number
+  errorMessage: string | null
+}
+
+export interface KnowledgeSourceInfo {
+  pluginId: string
+  name: string
+  icon?: string
+  category: string
+  syncSchema: Record<string, unknown> | null
+  syncConfig: SyncConfig | null
+}
+
+export interface PostInstall {
+  heading: string
+  body: string
+  docsUrl?: string
+  ctaLabel: string
+  ctaHref: string
+}
+
 // User session (from Azure AD via Auth.js)
 export interface SupaproxyUser {
   id: string
