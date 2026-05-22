@@ -611,3 +611,29 @@ export interface RouteResponse {
   routed: boolean;
   routed_to: string | null;
 }
+
+// ── Admin (cloud-only) ──
+
+export interface AdminPluginListResponse {
+  plugins: MarketplacePlugin[];
+}
+
+export interface AdminPluginUploadResponse {
+  plugin: MarketplacePlugin;
+}
+
+// ── Cloud public ──
+
+export interface DemoRequestData {
+  name: string;
+  email: string;
+  company?: string;
+  message?: string;
+}
+
+export interface ContactRequestData {
+  name?: string;
+  email: string;
+  subject?: string;
+  message?: string;
+}

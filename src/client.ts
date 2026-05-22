@@ -31,6 +31,8 @@ import type {
   KnowledgeSourcesResponse, KnowledgeBrowseResponse, KnowledgeSyncConfigResponse, KnowledgeSyncStatusResponse,
   AvailableKnowledgeResponse, EnableKnowledgeSourceResponse,
   SyncHistoryResponse, KnowledgeHealthResponse,
+  AdminPluginListResponse, AdminPluginUploadResponse,
+  DemoRequestData, ContactRequestData,
 } from './api.js';
 import type { PromptType, PromptScope, PolicyEnforcement } from './entities.js';
 
@@ -74,6 +76,8 @@ export class SupaProxyClient {
   public knowledge: KnowledgeAPI;
   public oauth: OAuthAPI;
   public route: RouteAPI;
+  public admin: AdminAPI;
+  public cloud: CloudAPI;
 
   constructor(options: ClientOptions | string) {
     const opts = typeof options === 'string' ? { baseUrl: options } : options;
@@ -97,6 +101,8 @@ export class SupaProxyClient {
     this.knowledge = new KnowledgeAPI(this);
     this.oauth = new OAuthAPI(this);
     this.route = new RouteAPI(this);
+    this.admin = new AdminAPI(this);
+    this.cloud = new CloudAPI(this);
   }
 
   async request<T>(method: string, path: string, body?: unknown, options?: RequestOptions): Promise<T> {
@@ -127,6 +133,22 @@ export class SupaProxyClient {
     }
 
     if (res.status === 204) return {} as T;
+    return res.json() as Promise<T>;
+  }
+
+  async requestFormData<T>(method: string, path: string, body: FormData, options?: RequestOptions): Promise<T> {
+    const url = `${this._baseUrl}${path}`;
+    const res = await fetch(url, {
+      method,
+      credentials: this.credentials,
+      body,
+      ...(options?.signal ? { signal: options.signal } : {}),
+    });
+    if (!res.ok) {
+      let message = `HTTP ${res.status}`;
+      try { const err = await res.json() as ErrorResponse; message = err.error || message; } catch {}
+      throw new SupaProxyError(res.status, message);
+    }
     return res.json() as Promise<T>;
   }
 
@@ -635,5 +657,41 @@ class RouteAPI {
 
   send(data: RouteRequest, options?: RequestOptions): Promise<RouteResponse> {
     return this.client.post('/api/route', data, options);
+  }
+}
+
+// ── Admin (cloud-only) ──
+
+class AdminAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  listPlugins(options?: RequestOptions): Promise<AdminPluginListResponse> {
+    return this.client.get('/api/admin/plugins', options);
+  }
+
+  uploadPlugin(formData: FormData): Promise<AdminPluginUploadResponse> {
+    return this.client.requestFormData('POST', '/api/admin/plugins', formData);
+  }
+
+  deprecatePlugin(pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/admin/plugins/${pluginId}/deprecate`);
+  }
+
+  rejectPlugin(pluginId: string): Promise<StatusResponse> {
+    return this.client.post(`/api/admin/plugins/${pluginId}/reject`);
+  }
+}
+
+// ── Cloud public ──
+
+class CloudAPI {
+  constructor(private client: SupaProxyClient) {}
+
+  demoRequest(data: DemoRequestData): Promise<StatusResponse> {
+    return this.client.post('/api/demo-request', data);
+  }
+
+  contact(data: ContactRequestData): Promise<StatusResponse> {
+    return this.client.post('/api/contact', data);
   }
 }
