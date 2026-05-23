@@ -14,7 +14,7 @@ import type {
   HealthResponse, SessionResponse, SignupRequest, SignupResponse,
   OrgResponse, OrgSettingsResponse, OrgUsersResponse, ModelsResponse,
   WorkspaceListResponse, WorkspaceSummaryResponse, WorkspaceDetailResponse,
-  ConnectionsResponse, McpTestResponse, SaveConnectionResponse,
+  ConnectionsResponse, OrgConnectionsResponse, McpTestResponse, SaveConnectionResponse,
   ConsumersResponse, KnowledgeResponse, CreateKnowledgeSourceRequest, CreateKnowledgeSourceResponse, ComplianceResponse, WorkspaceGuardrailsResponse, ActivityResponse,
   ConversationListResponse, ConversationDetailResponse, CloseConversationResponse,
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
@@ -233,6 +233,15 @@ class OrgAPI {
 
   listProviderModels(data: { type: string; api_key: string }): Promise<ProviderModelsResponse> {
     return this.client.post('/api/org/providers/models', data);
+  }
+
+  connections(params?: { search?: string; limit?: number; page?: number }, options?: RequestOptions): Promise<OrgConnectionsResponse> {
+    const qs = new URLSearchParams();
+    if (params?.search) qs.set('search', params.search);
+    if (params?.limit) qs.set('limit', String(params.limit));
+    if (params?.page != null) qs.set('page', String(params.page));
+    const q = qs.toString();
+    return this.client.get(`/api/org/connections${q ? `?${q}` : ''}`, options);
   }
 }
 

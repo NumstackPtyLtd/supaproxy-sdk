@@ -5,7 +5,7 @@
 
 import type {
   Conversation, ConversationWithStats, ConversationStats, Message, AuditLog,
-  Workspace, Connection, ConnectionTool, Consumer, KnowledgeSourceEntity, Guardrail,
+  Workspace, Connection, ConnectionTool, OrgConnection, OrgTool, Consumer, KnowledgeSourceEntity, Guardrail,
   Organisation, User, ComplianceViolation, KnowledgeGap, FraudIndicator,
 } from './entities';
 
@@ -112,6 +112,14 @@ export interface WorkspaceDetailResponse {
 export interface ConnectionsResponse {
   connections: Connection[];
   tools: ConnectionTool[];
+}
+
+export interface OrgConnectionsResponse {
+  connections: OrgConnection[];
+  tools: OrgTool[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 export interface McpTestResponse {

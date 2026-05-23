@@ -168,6 +168,27 @@ export interface ConnectionTool {
   connection_type?: string;
 }
 
+export interface OrgConnection {
+  id: string;
+  workspace_id: string;
+  workspace_name: string;
+  name: string;
+  type: string;
+  status: string;
+  tool_count: number;
+}
+
+export interface OrgTool {
+  id: string;
+  connection_id: string;
+  connection_name: string;
+  name: string;
+  description: string | null;
+  is_write: boolean;
+  workspace_id: string;
+  workspace_name: string;
+}
+
 export interface Consumer {
   id: string;
   workspace_id: string;
