@@ -14,7 +14,7 @@ import type {
   HealthResponse, SessionResponse, SignupRequest, SignupResponse,
   OrgResponse, OrgSettingsResponse, OrgUsersResponse, ModelsResponse,
   WorkspaceListResponse, WorkspaceSummaryResponse, WorkspaceDetailResponse,
-  ConnectionsResponse, OrgConnectionsResponse, McpTestResponse, SaveConnectionResponse,
+  ConnectionsResponse, OrgConnectionsResponse, ConnectionToolsResponse, McpTestResponse, SaveConnectionResponse,
   ConsumersResponse, KnowledgeResponse, CreateKnowledgeSourceRequest, CreateKnowledgeSourceResponse, ComplianceResponse, WorkspaceGuardrailsResponse, ActivityResponse,
   ConversationListResponse, ConversationDetailResponse, CloseConversationResponse,
   DashboardResponse, QueryRequest, QueryResponse, QueuesResponse,
@@ -242,6 +242,10 @@ class OrgAPI {
     if (params?.page != null) qs.set('page', String(params.page));
     const q = qs.toString();
     return this.client.get(`/api/org/connections${q ? `?${q}` : ''}`, options);
+  }
+
+  connectionTools(connectionId: string, options?: RequestOptions): Promise<ConnectionToolsResponse> {
+    return this.client.get(`/api/org/connections/${connectionId}/tools`, options);
   }
 }
 

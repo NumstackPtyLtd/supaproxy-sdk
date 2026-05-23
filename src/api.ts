@@ -116,10 +116,13 @@ export interface ConnectionsResponse {
 
 export interface OrgConnectionsResponse {
   connections: OrgConnection[];
-  tools: OrgTool[];
   total: number;
   page: number;
   limit: number;
+}
+
+export interface ConnectionToolsResponse {
+  tools: OrgTool[];
 }
 
 export interface McpTestResponse {
