@@ -125,6 +125,12 @@ export interface ConnectionToolsResponse {
   tools: OrgTool[];
 }
 
+export interface ReconnectResponse {
+  status: string;
+  tools: number;
+  message: string;
+}
+
 export interface McpTestResponse {
   ok: boolean;
   tools?: number;
