@@ -621,12 +621,18 @@ export interface RouteRequest {
   query: string;
 }
 
+export interface ScopeChange {
+  current_workspace: string;
+  current_workspace_id: string;
+}
+
 export interface RouteResponse {
   answer: string;
   conversation_id: string;
   workspace_id: string;
   routed: boolean;
   routed_to: string | null;
+  scope_change?: ScopeChange;
 }
 
 // ── Admin (cloud-only) ──
