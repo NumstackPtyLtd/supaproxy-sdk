@@ -129,6 +129,9 @@ export type WorkspaceStatus = 'active' | 'paused' | 'archived';
 export type ConnectionStatus = 'connected' | 'disconnected' | 'error';
 export type ConnectionTransport = 'http' | 'stdio';
 
+/** How strictly the AI must stay within the knowledge base and tool results. */
+export type KnowledgeGrounding = 'strict' | 'grounded' | 'open';
+
 export interface Workspace {
   id: string;
   org_id: string;
@@ -140,6 +143,8 @@ export interface Workspace {
   max_tool_rounds: number;
   cold_timeout_minutes: number;
   close_timeout_minutes: number;
+  /** Per-workspace grounding override; null inherits the org default. */
+  knowledge_grounding: KnowledgeGrounding | null;
   created_by: string | null;
   created_at: string;
   updated_at: string;
