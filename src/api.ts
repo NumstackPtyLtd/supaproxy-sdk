@@ -619,6 +619,8 @@ export interface StatusResponse {
 
 export interface RouteRequest {
   query: string;
+  /** Optional client-generated test session id; a fresh value starts a clean routing session. */
+  sessionId?: string;
 }
 
 export interface ScopeChange {
